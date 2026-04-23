@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Edit User - Sport Hub')
+@section('title', 'Edit User - BookHub')
 
 @section('content')
 <div class="mb-6">
     <h1 class="text-3xl font-bold text-gray-900">Edit User</h1>
-    <p class="text-gray-600 mt-2">Ubah data pengguna sistem Sport Hub</p>
+    <p class="text-gray-600 mt-2">Ubah data pengguna sistem bookHub</p>
 </div>
 
 <div class="bg-white rounded-lg shadow p-8 max-w-2xl">
@@ -129,7 +129,7 @@
                                 @elseif ($role->name === 'petugas')
                                     Mengelola persetujuan peminjaman dan pengembalian
                                 @else
-                                    Dapat meminjam dan mengembalikan alat
+                                    Dapat meminjam dan mengembalikan Buku
                                 @endif
                             </p>
                         </label>

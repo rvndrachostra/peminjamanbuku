@@ -19,7 +19,7 @@ class BorrowingController extends Controller
 
     public function index()
     {
-        $borrowings = Borrowing::with(['user', 'equipment'])
+        $borrowings = Borrowing::with(['user', 'book'])
             ->where('status', 'pending')
             ->orderByDesc('created_at')
             ->paginate(10);
@@ -34,9 +34,9 @@ class BorrowingController extends Controller
             return back()->withErrors('Hanya peminjaman pending yang dapat disetujui');
         }
 
-        $equipment = $borrowing->equipment;
-        if ($equipment->qty_available < $borrowing->qty) {
-            return back()->withErrors('Stok alat tidak cukup');
+        $book = $borrowing->book;
+        if ($book->qty_available < $borrowing->qty) {
+            return back()->withErrors('Stok buku tidak cukup');
         }
 
         $borrowing->update([
@@ -44,8 +44,8 @@ class BorrowingController extends Controller
             'approved_by' => Auth::id(),
         ]);
 
-        $equipment->update([
-            'qty_available' => $equipment->qty_available - $borrowing->qty,
+        $book->update([
+            'qty_available' => $book->qty_available - $borrowing->qty,
         ]);
 
         $this->logActivity(Auth::user(), "Menyetujui peminjaman dari {$borrowing->user->name}");
@@ -55,7 +55,7 @@ class BorrowingController extends Controller
 
     public function monitoringReturns()
     {
-        $borrowings = Borrowing::with(['user', 'equipment'])
+        $borrowings = Borrowing::with(['user', 'book'])
             ->where(function ($query) {
                 $query->where('status', 'approved')
                     ->orWhere(function ($returnedQuery) {
@@ -115,9 +115,9 @@ class BorrowingController extends Controller
             'fine_paid_at' => $fineStatus === 'lunas' ? now() : null,
         ]);
 
-        $equipment = $borrowing->equipment;
-        $equipment->update([
-            'qty_available' => $equipment->qty_available + $borrowing->qty,
+        $book = $borrowing->book;
+        $book->update([
+            'qty_available' => $book->qty_available + $borrowing->qty,
         ]);
 
         $this->logActivity(
@@ -159,7 +159,7 @@ class BorrowingController extends Controller
 
     public function report()
     {
-        $borrowings = Borrowing::with(['user', 'equipment', 'approver'])
+        $borrowings = Borrowing::with(['user', 'book', 'approver'])
             ->orderByDesc('created_at')
             ->get();
 

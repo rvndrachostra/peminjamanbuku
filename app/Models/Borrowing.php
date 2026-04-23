@@ -11,7 +11,7 @@ class Borrowing extends Model
 
     protected $fillable = [
         'user_id',
-        'equipment_id',
+        'book_id',
         'qty',
         'start_date',
         'end_date',
@@ -48,16 +48,19 @@ class Borrowing extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)
+                    ->withDefault(['name' => 'User Dihapus']); // ✅ jaring pengaman
     }
 
-    public function equipment()
+    public function book()
     {
-        return $this->belongsTo(Equipment::class);
+        return $this->belongsTo(Book::class)
+                    ->withDefault(['name' => 'Buku Dihapus']); // ✅ jaring pengaman
     }
 
     public function approver()
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'approved_by')
+                    ->withDefault(['name' => '-']); // ✅ jaring pengaman
     }
 }

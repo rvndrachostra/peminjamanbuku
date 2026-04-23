@@ -9,7 +9,7 @@
             <h1 class="text-3xl font-bold text-gray-900">Laporan Peminjaman</h1>
             <p class="text-gray-600 mt-2">Laporan lengkap semua peminjaman buku</p>
         </div>
-        <button onclick="window.print()" class="bg-amber-700 text-white px-6 py-2 rounded-lg hover:bg-amber-800 transition font-medium">
+        <button onclick="window.print()" class="bg-amber-700 text-white px-6 py-2 rounded-lg hover:bg-amber-800 transition font-medium no-print">
             🖨️ Cetak Laporan
         </button>
     </div>
@@ -40,30 +40,45 @@
                 @forelse ($borrowings as $key => $borrowing)
                     <tr>
                         <td class="px-4 py-3 text-sm text-gray-900">{{ $key + 1 }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">{{ $borrowing->user->name }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">{{ $borrowing->book->name }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">{{ $borrowing->qty }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">{{ $borrowing->start_date->format('d/m/Y') }}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">{{ $borrowing->end_date->format('d/m/Y') }}</td>
+
+                        {{-- ✅ Aman dari null dengan ?-> dan ?? --}}
                         <td class="px-4 py-3 text-sm text-gray-900">
-                            {{ $borrowing->returned_at ? $borrowing->returned_at->format('d/m/Y') : '-' }}
+                            {{ $borrowing->user?->name ?? 'User Dihapus' }}
                         </td>
+                        <td class="px-4 py-3 text-sm text-gray-900">
+                            {{ $borrowing->book?->name ?? 'Buku Dihapus' }}
+                        </td>
+
+                        <td class="px-4 py-3 text-sm text-gray-900">{{ $borrowing->qty }}</td>
+
+                        {{-- ✅ Aman dari null dengan ?-> pada datetime --}}
+                        <td class="px-4 py-3 text-sm text-gray-900">
+                            {{ $borrowing->start_date?->format('d/m/Y') ?? '-' }}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-900">
+                            {{ $borrowing->end_date?->format('d/m/Y') ?? '-' }}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-900">
+                            {{ $borrowing->returned_at?->format('d/m/Y') ?? '-' }}
+                        </td>
+
                         <td class="px-4 py-3 text-sm">
                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
                                 @if ($borrowing->status === 'pending') bg-yellow-100 text-yellow-800
-                                @elseif ($borrowing->status === 'approved') bg-lime-100 text-blue-800
-                                @elseif ($borrowing->status === 'rejected') bg-red-100 text-red-800
+                                @if ($borrowing->status === 'approved') bg-lime-100 text-blue-800
+                                @if ($borrowing->status === 'rejected') bg-red-100 text-red-800
                                 @else bg-green-100 text-green-800 @endif">
                                 {{ ucfirst($borrowing->status) }}
                             </span>
                         </td>
+
                         <td class="px-4 py-3 text-sm text-gray-900">
                             {{ $borrowing->approver?->name ?? '-' }}
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="px-4 py-3 text-center text-gray-500">
+                        <td colspan="9" class="px-4 py-8 text-center text-gray-500">
                             Tidak ada data peminjaman
                         </td>
                     </tr>
@@ -72,9 +87,11 @@
         </table>
     </div>
 
-    <div class="mt-8 pt-6 border-t text-sm text-gray-600">
+    <div class="mt-8 pt-6 border-t text-sm text-gray-600 space-y-1">
         <p>Total Peminjaman: <strong>{{ $borrowings->count() }}</strong></p>
+        <p>Peminjaman Pending: <strong>{{ $borrowings->where('status', 'pending')->count() }}</strong></p>
         <p>Peminjaman Approved: <strong>{{ $borrowings->where('status', 'approved')->count() }}</strong></p>
+        <p>Peminjaman Rejected: <strong>{{ $borrowings->where('status', 'rejected')->count() }}</strong></p>
         <p>Peminjaman Returned: <strong>{{ $borrowings->where('status', 'returned')->count() }}</strong></p>
     </div>
 </div>

@@ -11,7 +11,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::withCount('equipments')->paginate(10);
+        $categories = Category::withCount('books')->paginate(10);
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -55,8 +55,8 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        if ($category->equipments()->count() > 0) {
-            return back()->withErrors('Kategori tidak dapat dihapus karena masih ada alat yang menggunakan kategori ini');
+        if ($category->books()->count() > 0) {
+            return back()->withErrors('Kategori tidak dapat dihapus karena masih ada buku yang menggunakan kategori ini');
         }
 
         $this->logActivity(Auth::user(), "Menghapus kategori: {$category->name}");

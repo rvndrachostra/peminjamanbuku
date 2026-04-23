@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pantau Pengembalian - Sport Hub')
+@section('title', 'Pantau Pengembalian - Book Hub')
 
 @section('content')
 <style>
@@ -80,7 +80,7 @@
 </style>
 
 <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Pantau Pengembalian Alat</h1>
+    <h1 class="text-3xl font-bold text-gray-900">Pantau Pengembalian Buku</h1>
     <p class="text-gray-600 mt-2">Denda keterlambatan otomatis Rp {{ number_format($dailyFine, 0, ',', '.') }} per hari.</p>
 </div>
 
@@ -107,7 +107,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peminjam</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alat</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buku</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batas Kembali</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Denda</th>
@@ -129,8 +129,8 @@
                                 <p class="text-xs text-gray-500">{{ $borrowing->user->email }}</p>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <p class="text-sm font-medium text-gray-900">{{ $borrowing->equipment->name }}</p>
-                                <p class="text-xs text-gray-500">{{ $borrowing->equipment->code }}</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $borrowing->book->name }}</p>
+                                <p class="text-xs text-gray-500">{{ $borrowing->book->isbn }}</p>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <p class="text-sm text-gray-900">{{ $borrowing->qty }}</p>
@@ -139,9 +139,11 @@
                                 <p class="text-sm font-medium text-gray-900">{{ $borrowing->end_date->format('d/m/Y') }}</p>
                                 @if ($borrowing->status === 'approved' && $borrowing->end_date < today())
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 mt-1">Terlambat {{ $overdueDays }} hari</span>
-                                @elseif ($borrowing->status === 'approved' && $borrowing->end_date->diffInDays(today()) <= 1)
+                                @endif
+                                @if ($borrowing->status === 'approved' && $borrowing->end_date->diffInDays(today()) <= 1)
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 mt-1">Segera</span>
-                                @elseif ($borrowing->status === 'returned')
+                                @endif
+                                @if ($borrowing->status === 'returned')
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700 mt-1">Dikembalikan {{ optional($borrowing->actual_return_date)->format('d/m/Y') ?? optional($borrowing->returned_at)->format('d/m/Y') }}</span>
                                 @endif
                             </td>
@@ -167,7 +169,8 @@
                                     <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-lime-100 text-blue-800">
                                         Dipinjam
                                     </span>
-                                @elseif ($borrowing->fine_status === 'belum_lunas')
+                                @endif
+                                @if ($borrowing->fine_status === 'belum_lunas')
                                     <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">
                                         Belum Lunas
                                     </span>
@@ -184,13 +187,14 @@
                                         class="open-return-modal bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                                         data-borrowing-id="{{ $borrowing->id }}"
                                         data-user-name="{{ $borrowing->user->name }}"
-                                        data-equipment-name="{{ $borrowing->equipment->name }}"
+                                        data-book-name="{{ $borrowing->book->name }}"
                                         data-end-date="{{ $borrowing->end_date->format('Y-m-d') }}"
                                         data-end-date-label="{{ $borrowing->end_date->format('d/m/Y') }}"
                                     >
                                         Dikembalikan
                                     </button>
-                                @elseif ($borrowing->status === 'returned' && $borrowing->fine_status === 'belum_lunas')
+                                @endif
+                                @if ($borrowing->status === 'returned' && $borrowing->fine_status === 'belum_lunas')
                                     <button
                                         type="button"
                                         class="open-paid-modal bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition"
@@ -216,7 +220,7 @@
     @else
         <div class="p-8 text-center">
             <div class="text-5xl mb-4">📦</div>
-            <p class="text-gray-500 text-lg">Semua alat telah dikembalikan atau tidak ada yang dipinjam</p>
+            <p class="text-gray-500 text-lg">Semua Buku telah dikembalikan atau tidak ada yang dipinjam</p>
             <a href="{{ route('dashboard') }}" class="text-blue-600 hover:underline mt-2 inline-block">Kembali ke Dashboard</a>
         </div>
     @endif
@@ -234,7 +238,7 @@
             @csrf
             <div class="rounded-lg bg-gray-50 p-4 text-sm text-gray-700">
                 <p><span class="font-semibold">Peminjam:</span> <span id="returnBorrowerLabel">-</span></p>
-                <p><span class="font-semibold">Alat:</span> <span id="returnEquipmentLabel">-</span></p>
+                <p><span class="font-semibold">Buku:</span> <span id="returnBookLabel">-</span></p>
                 <p><span class="font-semibold">Batas Kembali:</span> <span id="returnDueDateLabel">-</span></p>
             </div>
 
@@ -420,13 +424,13 @@
         button.addEventListener('click', () => {
             const borrowingId = button.dataset.borrowingId;
             const userName = button.dataset.userName;
-            const equipmentName = button.dataset.equipmentName;
+            const bookName = button.dataset.bookName;
             const dueDate = button.dataset.endDate;
             const dueDateLabel = button.dataset.endDateLabel;
 
             returnForm.action = returnUrlTemplate.replace('__ID__', borrowingId);
             document.getElementById('returnBorrowerLabel').textContent = userName;
-            document.getElementById('returnEquipmentLabel').textContent = equipmentName;
+            document.getElementById('returnBookLabel').textContent = bookName;
             document.getElementById('returnDueDateLabel').textContent = dueDateLabel;
             returnDueDateInput.value = dueDate;
 

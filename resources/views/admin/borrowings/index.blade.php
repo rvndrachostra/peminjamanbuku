@@ -1,11 +1,11 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
-@section('title', 'Data Peminjaman - Sport Hub')
+@section('title', 'Data Peminjaman - Book Hub')
 
 @section('content')
 <div class="mb-6">
     <h1 class="text-3xl font-bold text-gray-900">Data Peminjaman</h1>
-    <p class="text-gray-600 mt-2">Kelola semua data peminjaman Sport</p>
+    <p class="text-gray-600 mt-2">Kelola semua data peminjaman Buku</p>
 </div>
 
 <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -14,7 +14,7 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peminjam</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sport</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buku</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -29,11 +29,11 @@
                             <p class="text-xs text-gray-500">{{ $borrowing->user->email }}</p>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <p class="text-sm font-medium text-gray-900">{{ $borrowing->equipment->name }}</p>
-                            <p class="text-xs text-gray-500">{{ $borrowing->equipment->code }}</p>
+                            <p class="text-sm font-medium text-gray-900">{{ $borrowing->book->name }}</p>
+                            <p class="text-xs text-gray-500">{{ $borrowing->book->isbn }}</p>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <p class="text-sm text-gray-900">{{ $borrowing->qty }} {{ $borrowing->equipment->category->name ?? 'unit' }}</p>
+                            <p class="text-sm text-gray-900">{{ $borrowing->qty }} {{ $borrowing->book->category->name ?? 'unit' }}</p>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $borrowing->start_date->format('d/m/Y') }} - {{ $borrowing->end_date->format('d/m/Y') }}
@@ -41,8 +41,8 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full
                                 @if ($borrowing->status === 'pending') bg-yellow-100 text-yellow-800
-                                @elseif ($borrowing->status === 'approved') bg-lime-100 text-blue-800
-                                @elseif ($borrowing->status === 'rejected') bg-red-100 text-red-800
+                                @if ($borrowing->status === 'approved') bg-lime-100 text-blue-800
+                                @if ($borrowing->status === 'rejected') bg-red-100 text-red-800
                                 @else bg-green-100 text-green-800 @endif">
                                 {{ ucfirst($borrowing->status) }}
                             </span>
@@ -71,4 +71,4 @@
         {{ $borrowings->links() }}
     </div>
 </div>
-@endsection
+@endsection --}}

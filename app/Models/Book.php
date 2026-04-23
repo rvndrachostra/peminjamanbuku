@@ -10,7 +10,7 @@ class Book extends Model
     use HasFactory;
 
     protected $table = 'books';
-    protected $fillable = ['category_id','name','author','isbn','year_published','qty_total','qty_available','description'];
+    protected $fillable = ['category_id','name','author','isbn','year_published','qty_total','qty_available','description','image'];
 
     public function category()
     {

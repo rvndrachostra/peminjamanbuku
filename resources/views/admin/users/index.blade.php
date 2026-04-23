@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola User - Sport Hub')
+@section('title', 'Kelola User - BookHub')
 
 @section('content')
 <style>
@@ -47,7 +47,7 @@
 <div class="mb-6 flex items-center justify-between">
     <div>
         <h1 class="text-3xl font-bold text-gray-900">Kelola User</h1>
-        <p class="text-gray-600 mt-2">Manajemen pengguna sistem Sport Hub</p>
+        <p class="text-gray-600 mt-2">Manajemen pengguna sistem BookHub</p>
     </div>
     <a href="{{ route('admin.users.create') }}" class="bg-lime-600 text-white px-6 py-2 rounded-lg hover:bg-lime-700 transition font-medium">
         + Tambah User Baru

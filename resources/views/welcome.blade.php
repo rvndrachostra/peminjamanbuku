@@ -3,69 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportHub - Sistem Peminjaman Alat Olahraga</title>
+    <title>BookHub - Sistem Peminjaman Buku Perpustakaan Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'DM Sans', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            color: #1a1d23;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+        /* ─── ANIMATIONS ─── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        .gradient-bg-alt {
-            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
         }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to   { opacity: 1; transform: translateX(0); }
         }
-        .hover-lift {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
-        .hover-lift:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+
+        /* ─── THEME COLORS ─── */
+        :root {
+            --primary: #14b87a;
+            --primary-dark: #0d9d6a;
+            --primary-light: #e6f7f0;
+            --secondary: #f59e0b;
+            --bg: #f0f2f5;
+            --surface: #ffffff;
+            --text: #1a1d23;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: rgba(0,0,0,0.08);
         }
-        .feature-card {
+
+        /* ─── COMPONENTS ─── */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(20,184,122,0.3);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s ease;
+            border: 2px solid var(--border);
+            cursor: pointer;
+        }
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px var(--shadow);
+            border: 1px solid var(--border);
             transition: all 0.3s ease;
         }
-        .feature-card:hover {
-            transform: scale(1.05);
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px var(--shadow);
         }
-        .smooth-scroll {
-            scroll-behavior: smooth;
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--primary-light);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.2s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            .hero-title {
+                font-size: 2.5rem;
+                line-height: 1.2;
+            }
+        }
+
+        /* ─── TAMBAHAN AGAR TEKS CTA JELAS ─── */
+        .gradient-bg {
+            background: linear-gradient(135deg, #0a5c4b, #0b3b3f);
+            /* gradien gelap untuk kontras dengan teks putih */
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-white to-gray-50 smooth-scroll">
+<body>
     <!-- Navbar -->
-    <nav class="glass-effect shadow-sm fixed w-full top-0 z-50 border-b border-gray-100">
+    <nav class="bg-white shadow-sm fixed w-full top-0 z-50 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex items-center space-x-3">
-                    <div class="gradient-bg p-2.5 rounded-xl shadow-lg">
-                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                         </svg>
                     </div>
-                    <span class="text-2xl font-bold text-gray-900">Sport<span class="text-emerald-600">Hub</span></span>
+                    <div>
+                        <span class="text-2xl font-bold text-gray-900 font-['Space_Grotesk']">Book<span class="text-green-500">Hub</span></span>
+                        <div class="text-xs text-green-500 font-medium tracking-wider uppercase">DIGITAL LIBRARY</div>
+                    </div>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#beranda" class="text-gray-600 hover:text-emerald-600 font-medium transition-colors">Beranda</a>
-                    <a href="#fitur" class="text-gray-600 hover:text-emerald-600 font-medium transition-colors">Fitur</a>
-                    <a href="#tentang" class="text-gray-600 hover:text-emerald-600 font-medium transition-colors">Tentang</a>
-                    <a href="#kontak" class="text-gray-600 hover:text-emerald-600 font-medium transition-colors">Kontak</a>
+                    <a href="#beranda" class="nav-link">Beranda</a>
+                    <a href="#fitur" class="nav-link">Fitur</a>
+                    <a href="#tentang" class="nav-link">Tentang</a>
+                    <a href="#kontak" class="nav-link">Kontak</a>
                 </div>
 
                 <!-- Auth Buttons -->
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('login') }}" class="hidden sm:block text-gray-600 hover:text-emerald-600 font-medium transition-colors px-4 py-2">Login</a>
-                    <a href="{{ route('login') }}" class="gradient-bg text-white px-6 py-2.5 rounded-xl hover:shadow-lg transition-all font-semibold">
-                        Mulai Sekarang
+                    <a href="{{ route('login') }}" class="hidden sm:block text-gray-600 hover:text-green-500 font-medium transition-colors px-4 py-2">Login</a>
+                    <a href="{{ route('register') }}" class="btn-primary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        Daftar Sekarang
                     </a>
                 </div>
             </div>
@@ -73,85 +215,82 @@
     </nav>
 
     <!-- Hero Section -->
-    <div id="beranda" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+    <div id="beranda" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8" style="background: var(--bg);">
         <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div class="hero-grid grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <!-- Left Content -->
-                <div class="text-center lg:text-left">
-                    <div class="inline-block mb-4">
-                        <span class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold border border-emerald-200">
+                <div class="text-center lg:text-left" style="animation: slideInLeft 0.8s ease forwards;">
+                    <div class="inline-block mb-6">
+                        <span class="bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-semibold border border-green-200">
                             🏆 Platform Terpercaya #1
                         </span>
                     </div>
-                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-6 leading-tight">
-                        Pinjam Alat
-                        <span class="text-emerald-600">Olahraga</span>
+                    <h1 class="hero-title text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-6 leading-tight font-['Space_Grotesk']">
+                        Pinjam Buku
+                        <span class="text-green-500">Online</span>
                         Jadi Mudah
                     </h1>
-                    <p class="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed">
-                        Platform peminjaman alat olahraga modern untuk kebutuhan latihan, kompetisi, dan event. Praktis, aman, dan terpercaya.
+                    <p class="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed font-['DM_Sans']">
+                        Platform peminjaman buku perpustakaan digital modern untuk kebutuhan membaca, belajar, dan penelitian. Praktis, aman, dan terpercaya.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <a href="{{ route('login') }}" class="gradient-bg text-white px-10 py-4 rounded-xl hover:shadow-xl transition-all font-bold text-lg">
+                        <a href="{{ route('login') }}" class="btn-primary text-lg font-bold">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                            </svg>
                             Login Sekarang
                         </a>
-                        <a href="#fitur" class="bg-white text-gray-900 px-10 py-4 rounded-xl hover:shadow-lg transition-all font-bold text-lg border-2 border-gray-200">
+                        <a href="#fitur" class="btn-secondary text-lg font-bold">
                             Pelajari Lebih lanjut
                         </a>
                     </div>
 
                     <!-- Stats -->
-                    {{-- <div class="grid grid-cols-3 gap-8 mt-16">
-                        <div class="text-center">
-                            <div class="text-4xl font-black text-emerald-600"></div>
-                            <div class="text-sm text-gray-600 mt-2 font-medium">Alat Tersedia</div>
+                    <div class="grid grid-cols-3 gap-8 mt-16">
+                        <div class="stat-card">
+                            <div class="text-3xl font-black text-green-500 mb-2">10K+</div>
+                            <div class="text-sm text-gray-600 font-medium">Koleksi Buku</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-4xl font-black text-emerald-600">5K</div>
-                            <div class="text-sm text-gray-600 mt-2 font-medium">Pengguna Aktif</div>
+                        <div class="stat-card">
+                            <div class="text-3xl font-black text-green-500 mb-2">5K+</div>
+                            <div class="text-sm text-gray-600 font-medium">Pengguna Aktif</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-4xl font-black text-emerald-600">98%</div>
-                            <div class="text-sm text-gray-600 mt-2 font-medium">Kepuasan</div>
+                        <div class="stat-card">
+                            <div class="text-3xl font-black text-green-500 mb-2">98%</div>
+                            <div class="text-sm text-gray-600 font-medium">Kepuasan</div>
                         </div>
-                    </div> --}}
+                    </div>
                 </div>
 
                 <!-- Right Image/Illustration -->
-                <div class="relative">
-                    <div class="glass-effect rounded-3xl p-8 shadow-xl hover-lift border border-gray-100">
-                        <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop" alt="Sports Equipment" class="rounded-2xl w-full shadow-lg">
+                <div class="relative" style="animation: slideInRight 0.8s ease forwards;">
+                    <div class="card p-8">
+                        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=600&fit=crop" alt="Library Books" class="rounded-2xl w-full shadow-lg">
 
                         <!-- Floating Cards -->
-                        <div class="absolute -top-6 -left-6 bg-white rounded-2xl p-5 shadow-2xl border border-gray-100">
+                        <div class="absolute -top-6 -left-6 card p-5">
                             <div class="flex items-center space-x-3">
-                                <div class="bg-emerald-100 p-3 rounkaljg
-                                   majd
-                                   ;la
-                                   
-                                   ladld
-                                   la
-                                   dlded-xl">
-                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="feature-icon">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
                                 </div>
                                 <div>
                                     <div class="font-bold text-gray-900">Tersedia</div>
-                                    <div class="text-sm text-gray-600">Alat Olahraga</div>
+                                    <div class="text-sm text-gray-600">Koleksi Buku</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="absolute -bottom-6 -right-6 bg-white rounded-2xl p-5 shadow-2xl border border-gray-100">
+                        <div class="absolute -bottom-6 -right-6 card p-5">
                             <div class="flex items-center space-x-3">
-                                <div class="bg-sky-100 p-3 rounded-xl">
-                                    <svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <div class="font-bold text-gray-900">9 jam</div>
+                                    <div class="font-bold text-gray-900">9/5</div>
                                     <div class="text-sm text-gray-600">Support</div>
                                 </div>
                             </div>
@@ -163,42 +302,40 @@
     </div>
 
     <!-- Role Cards Section -->
-    <div class="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <div class="py-24 px-4 sm:px-6 lg:px-8" style="background: var(--bg);">
         <div class="max-w-7xl mx-auto">
-            <div class="text-center msd,d;
-            b-20">
-                <span class="text-emerald-600 font-semibold text-sm uppercase tracking-wider">Untuk Siapa?</span>
-                <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4 mt-3">Tiga Peran Utama</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Setiap peran memiliki akses dan fitur khusus yang disesuaikan</p>
+            <div class="text-center mb-20">
+                <span class="text-green-600 font-semibold text-sm uppercase tracking-wider">Untuk Siapa?</span>
+                <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4 mt-3 font-['Space_Grotesk']">Tiga Peran Utama</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto font-['DM_Sans']">Setiap peran memiliki akses dan fitur khusus yang disesuaikan</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Admin Card -->
-                <div class="glass-effect rounded-3xl p-8 hover-lift shadow-lg border border-gray-100">
-                    <div class="bg-gradient-to-br from-red-500 to-rose-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="card p-8" style="animation: fadeInUp 0.6s ease forwards;">
+                    <div class="feature-icon mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Admin</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">Kontrol penuh sistem, kelola pengguna, alat olahraga, kategori, dan pantau semua aktivitas peminjaman</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3 font-['Space_Grotesk']">Admin</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed font-['DM_Sans']">Kontrol penuh sistem, kelola pengguna, buku, kategori, dan pantau semua aktivitas peminjaman</p>
                     <ul class="space-y-3 text-sm text-gray-600">
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            <span>Manajemen User & Alat</span>
+                            <span>Manajemen User & Buku</span>
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
                             <span>Dashboard Analytics Real-time</span>
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             </svg>
                             <span>Log Aktivitas Lengkap</span>
                         </li>
@@ -206,29 +343,29 @@
                 </div>
 
                 <!-- Petugas Card -->
-                <div class="glass-effect rounded-3xl p-8 hover-lift shadow-lg border border-gray-100">
-                    <div class="bg-gradient-to-br from-sky-500 to-blue-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="card p-8" style="animation: fadeInUp 0.8s ease forwards;">
+                    <div class="feature-icon mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Petugas</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">Verifikasi peminjaman, monitor pengembalian alat, cek kondisi, dan buat laporan detail</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3 font-['Space_Grotesk']">Petugas</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed font-['DM_Sans']">Verifikasi peminjaman, monitor pengembalian buku, cek kondisi, dan buat laporan detail</p>
                     <ul class="space-y-3 text-sm text-gray-600">
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
                             <span>Approve Peminjaman Cepat</span>
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            <span>Inspeksi Kondisi Alat</span>
+                            <span>Inspeksi Kondisi Buku</span>
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
                             <span>Generate Laporan Otomatis</span>
@@ -237,29 +374,29 @@
                 </div>
 
                 <!-- Peminjam Card -->
-                <div class="glass-effect rounded-3xl p-8 hover-lift shadow-lg border border-gray-100">
-                    <div class="bg-gradient-to-br from-emerald-500 to-green-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="card p-8" style="animation: fadeInUp 1s ease forwards;">
+                    <div class="feature-icon mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Peminjam</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">Cari alat olahraga yang tersedia, ajukan peminjaman, dan kembalikan dengan mudah</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3 font-['Space_Grotesk']">Peminjam</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed font-['DM_Sans']">Cari buku yang tersedia, ajukan peminjaman, dan kembalikan dengan mudah</p>
                     <ul class="space-y-3 text-sm text-gray-600">
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
-                            <span>Browse Alat Olahraga</span>
+                            <span>Browse Koleksi Buku</span>
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
                             <span>Booking Online Instant</span>
                         </li>
                         <li class="flex items-center">
-                            <svg class="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-green-500 mr-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                             </svg>
                             <span>Track Status Real-time</span>
@@ -274,27 +411,27 @@
     <div id="fitur" class="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
-                <span class="text-emerald-600 font-semibold text-sm uppercase tracking-wider">Kenapa Kami?</span>
+                <span class="text-amber-600 font-semibold text-sm uppercase tracking-wider">Kenapa Kami?</span>
                 <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4 mt-3">Fitur Unggulan</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Semua yang Anda butuhkan dalam satu platform terintegrasi</p>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Semua yang Anda butuhkan dalam satu platform perpustakaan digital terintegrasi</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Feature 1 -->
                 <div class="glass-effect rounded-2xl p-6 feature-card border border-gray-100">
-                    <div class="bg-emerald-50 w-14 h-14 rounded-xl flex items-center justify-center mb-5 border border-emerald-100">
-                        <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-amber-50 w-14 h-14 rounded-xl flex items-center justify-center mb-5 border border-amber-100">
+                        <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
                     </div>
-                    <h4 class="font-bold text-gray-900 mb-2 text-lg">Inventori Real-time</h4>
-                    <p class="text-gray-600 text-sm leading-relaxed">Monitor ketersediaan alat olahraga secara langsung dengan update otomatis</p>
+                    <h4 class="font-bold text-gray-900 mb-2 text-lg">Katalog Buku Real-time</h4>
+                    <p class="text-gray-600 text-sm leading-relaxed">Monitor ketersediaan buku secara langsung dengan update otomatis</p>
                 </div>
 
                 <!-- Feature 2 -->
                 <div class="glass-effect rounded-2xl p-6 feature-card border border-gray-100">
-                    <div class="bg-sky-50 w-14 h-14 rounded-xl flex items-center justify-center mb-5 border border-sky-100">
-                        <svg class="w-7 h-7 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-blue-50 w-14 h-14 rounded-xl flex items-center justify-center mb-5 border border-blue-100">
+                        <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
@@ -364,7 +501,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
                     </div>
-                    <h4 class="font-bold text-gray-900 mb-2 text-lg">Support 24/7</h4>
+                    <h4 class="font-bold text-gray-900 mb-2 text-lg">Support 9/5</h4>
                     <p class="text-gray-600 text-sm leading-relaxed">Tim support profesional siap membantu kapan saja</p>
                 </div>
             </div>
@@ -372,76 +509,76 @@
     </div>
 
     <!-- Categories Section -->
-    <div id="tentang" class="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-50 via-white to-sky-50">
+    <div id="tentang" class="py-24 px-4 sm:px-6 lg:px-8 bg-linear-to-br from-emerald-50 via-white to-sky-50">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
-                <span class="text-emerald-600 font-semibold text-sm uppercase tracking-wider">Koleksi Lengkap</span>
-                <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4 mt-3">Kategori Alat Olahraga</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Berbagai pilihan alat olahraga untuk semua kebutuhan Anda</p>
+                <span class="text-amber-600 font-semibold text-sm uppercase tracking-wider">Koleksi Lengkap</span>
+                <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4 mt-3">Kategori Buku</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Berbagai pilihan buku untuk semua kebutuhan Anda</p>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <!-- Category 1 -->
                 <div class="glass-effect rounded-2xl p-6 text-center hover-lift cursor-pointer border border-gray-100">
-                    <div class="bg-gradient-to-br from-orange-500 to-red-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                    <div class="bg-linear-to-br from-orange-500 to-red-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                         <span class="text-3xl">⚽</span>
                     </div>
-                    <h4 class="font-bold text-gray-900">Bola</h4>
-                    <p class="text-sm text-gray-600 mt-1">Sepak, Basket, Voli</p>
+                    <h4 class="font-bold text-gray-900">Fiksi</h4>
+                    <p class="text-sm text-gray-600 mt-1">Novel, Cerita Pendek</p>
                 </div>
 
                 <!-- Category 2 -->
                 <div class="glass-effect rounded-2xl p-6 text-center hover-lift cursor-pointer border border-gray-100">
-                    <div class="bg-gradient-to-br from-blue-500 to-cyan-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                    <div class="bg-linear-to-br from-blue-500 to-cyan-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                         <span class="text-3xl">🏸</span>
                     </div>
-                    <h4 class="font-bold text-gray-900">Raket</h4>
-                    <p class="text-sm text-gray-600 mt-1">Badminton, Tenis</p>
+                    <h4 class="font-bold text-gray-900">Non-Fiksi</h4>
+                    <p class="text-sm text-gray-600 mt-1">Biografi, Sejarah</p>
                 </div>
 
                 <!-- Category 3 -->
                 <div class="glass-effect rounded-2xl p-6 text-center hover-lift cursor-pointer border border-gray-100">
-                    <div class="bg-gradient-to-br from-green-500 to-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                    <div class="bg-linear-to-br from-green-500 to-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                         <span class="text-3xl">🏋️</span>
                     </div>
-                    <h4 class="font-bold text-gray-900">Fitness</h4>
-                    <p class="text-sm text-gray-600 mt-1">Dumbbell, Matras</p>
+                    <h4 class="font-bold text-gray-900">Pendidikan</h4>
+                    <p class="text-sm text-gray-600 mt-1">Pelajaran, Referensi</p>
                 </div>
 
                 <!-- Category 4 -->
                 <div class="glass-effect rounded-2xl p-6 text-center hover-lift cursor-pointer border border-gray-100">
-                    <div class="bg-gradient-to-br from-green-500 to-emerald-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                    <div class="bg-linear-to-br from-green-500 to-emerald-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                         <span class="text-3xl">⛳</span>
                     </div>
-                    <h4 class="font-bold text-gray-900">Golf</h4>
-                    <p class="text-sm text-gray-600 mt-1">Stick, Bola, Tas</p>
+                    <h4 class="font-bold text-gray-900">Teknologi</h4>
+                    <p class="text-sm text-gray-600 mt-1">Programming, IT</p>
                 </div>
 
                 <!-- Category 5 -->
                 <div class="glass-effect rounded-2xl p-6 text-center hover-lift cursor-pointer border border-gray-100">
-                    <div class="bg-gradient-to-br from-yellow-500 to-orange-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                    <div class="bg-linear-to-br from-yellow-500 to-orange-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                         <span class="text-3xl">🏊</span>
                     </div>
-                    <h4 class="font-bold text-gray-900">Renang</h4>
-                    <p class="text-sm text-gray-600 mt-1">Kacamata, Fins</p>
+                    <h4 class="font-bold text-gray-900">Sains</h4>
+                    <p class="text-sm text-gray-600 mt-1">Fisika, Kimia, Biologi</p>
                 </div>
 
                 <!-- Category 6 -->
                 <div class="glass-effect rounded-2xl p-6 text-center hover-lift cursor-pointer border border-gray-100">
-                    <div class="bg-gradient-to-br from-indigo-500 to-blue-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                    <div class="bg-linear-to-br from-indigo-500 to-blue-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                         <span class="text-3xl">🥊</span>
                     </div>
-                    <h4 class="font-bold text-gray-900">Bela Diri</h4>
-                    <p class="text-sm text-gray-600 mt-1">Sarung Tinju, Samsak</p>
+                    <h4 class="font-bold text-gray-900">Seni</h4>
+                    <p class="text-sm text-gray-600 mt-1">Musik, Lukis, Fotografi</p>
                 </div>
 
                 <!-- Category 7 -->
                 <div class="glass-effect rounded-2xl p-6 text-center hover-lift cursor-pointer border border-gray-100">
-                    <div class="bg-gradient-to-br from-rose-500 to-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
+                    <div class="bg-linear-to-br from-rose-500 to-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                         <span class="text-3xl">🏃</span>
                     </div>
-                    <h4 class="font-bold text-gray-900">Lari</h4>
-                    <p class="text-sm text-gray-600 mt-1">Sepatu, Tracker</p>
+                    <h4 class="font-bold text-gray-900">Motivasi</h4>
+                    <p class="text-sm text-gray-600 mt-1">Inspirasi, Sukses</p>
                 </div>
 
                 <!-- Category 8 -->
@@ -449,8 +586,8 @@
                     <div class="bg-gradient-to-br from-teal-500 to-cyan-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
                         <span class="text-3xl">🚴</span>
                     </div>
-                    <h4 class="font-bold text-gray-900">Sepeda</h4>
-                    <p class="text-sm text-gray-600 mt-1">Helm, Pompa</p>
+                    <h4 class="font-bold text-gray-900">Bahasa</h4>
+                    <p class="text-sm text-gray-600 mt-1">Inggris, Indonesia</p>
                 </div>
             </div>
         </div>
@@ -471,13 +608,14 @@
                     </span>
                     <h2 class="text-4xl md:text-5xl font-black mb-6">Siap Memulai?</h2>
                     <p class="text-xl text-emerald-50 mb-10 max-w-2xl mx-auto leading-relaxed">
-                        Bergabunglah dengan siswa berprestasi menjadi atlet dan pecinta olahraga untuk kebutuhan peminjaman alat olahraga mereka
+                        Bergabunglah dengan siswa berprestasi menjadi pembaca dan pencari ilmu untuk kebutuhan peminjaman buku mereka
+                    </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="{{ route('login') }}" class="bg-white text-emerald-600 px-12 py-4 rounded-xl hover:bg-emerald-50 transition-all font-bold text-lg shadow-xl">
+                        <a href="{{ route('login') }}" class="bg-transparent border-2 border-white text-white px-12 py-4 rounded-xl hover:bg-white hover:text-amber-600 transition-all font-bold text-lg shadow-xl">
                             Login Sekarang
                         </a>
-                        <a href="{{ route('dashboard') }}" class="bg-emerald-600 bg-opacity-30 text-white px-12 py-4 rounded-xl hover:bg-opacity-40 transition-all font-bold text-lg border-2 border-white border-opacity-30 backdrop-blur-sm">
-                            Lihat Dashboard
+                        <a href="{{ route('register') }}" class="bg-transparent border-2 border-white text-white px-12 py-4 rounded-xl hover:bg-white hover:text-amber-600 transition-all font-bold text-lg shadow-xl">
+                            Daftar Gratis
                         </a>
                     </div>
                 </div>
@@ -497,10 +635,10 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <span class="text-xl font-bold">Sport<span class="text-emerald-400">Hub</span></span>
+                        <span class="text-xl font-bold">Book<span class="text-green-500">Hub</span></span>
                     </div>
                     <p class="text-gray-400 mb-6 leading-relaxed max-w-md">
-                      Platform peminjaman alat olahraga terpercaya untuk kebutuhan siswa latihan, kompetisi, dan event. Mudah, aman, dan profesional.
+                      Platform peminjaman buku perpustakaan terpercaya untuk kebutuhan siswa membaca, belajar, dan penelitian. Mudah, aman, dan profesional.
                     </p>
                     <div class="flex space-x-3">
                         <a href="#" class="bg-gray-800 p-3 rounded-xl hover:bg-gray-700 transition-colors">
@@ -546,7 +684,7 @@
                             <svg class="w-5 h-5 mr-2 mt-0.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                             </svg>
-                            SportHub@smk.belajar.id
+                            BookHub@smk.belajar.id
                         </li>
                         <li class="flex items-start">
                             <svg class="w-5 h-5 mr-2 mt-0.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -572,8 +710,8 @@
             </div>
 
             <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-                <p class="text-gray-400 mb-4 md:mb-0">© 2026 SportHub. Semua hak dilindungi undang-undang Perolahragaan.</p>
-                <p class="text-gray-500 text-sm">Dibuat dengan <span class="text-red-500">❤️</span> untuk kemudahan peminjaman Alat Olahraga</p>
+                <p class="text-gray-400 mb-4 md:mb-0">© 2026 BookHub. Semua hak dilindungi undang-undang Perpustakaan.</p>
+                <p class="text-gray-500 text-sm">Dibuat dengan <span class="text-red-500">❤️</span> untuk kemudahan peminjaman Buku</p>
             </div>
         </div>
     </footer>

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Borrowing;
-use App\Models\Equipment;
+use App\Models\Book;
 use App\Models\User;
 
 class DashboardController extends Controller
@@ -12,6 +12,13 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+        // Jika user tidak memiliki role, beri role peminjam default
+        if (!$user->isAdmin() && !$user->isPetugas() && !$user->isPeminjam()) {
+            $peminjamRole = \App\Models\Role::firstOrCreate(['name' => 'peminjam'], ['label' => 'Peminjam']);
+            $user->roles()->attach($peminjamRole->id);
+            $user->refresh(); // Refresh untuk mendapatkan role baru
+        }
 
         // Redirect berdasarkan role
         if ($user->isAdmin()) {
@@ -29,7 +36,7 @@ class DashboardController extends Controller
     {
         $data = [
             'totalUsers' => User::count(),
-            'totalEquipment' => Equipment::count(),
+            'totalBooks' => Book::count(),
             'totalBorrowings' => Borrowing::count(),
             'pendingBorrowings' => Borrowing::where('status', 'pending')->count(),
         ];

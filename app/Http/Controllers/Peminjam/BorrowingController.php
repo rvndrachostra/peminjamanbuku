@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Peminjam;
 
 use App\Http\Controllers\Controller;
 use App\Models\Borrowing;
-use App\Models\Equipment;
+use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,35 +12,52 @@ class BorrowingController extends Controller
 {
     public function index()
     {
-        $equipments = Equipment::with('category')
-            ->where('qty_available', '>', 0)
-            ->paginate(12);
-        return view('peminjam.equipments.index', compact('equipments'));
+        $query = Book::with('category')->where('qty_available', '>', 0);
+
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('author', 'like', '%' . $search . '%')
+                  ->orWhere('isbn', 'like', '%' . $search . '%')
+                  ->orWhereHas('category', function ($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        $books = $query->paginate(12);
+        return view('peminjam.books.index', compact('books'));
     }
 
-    public function create(Equipment $equipment)
+    public function create(Book $book)
     {
-        return view('peminjam.borrowings.create', compact('equipment'));
+        $book->load('category');
+        return view('peminjam.borrowings.create', compact('book'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'equipment_id' => 'required|exists:equipments,id',
+            'book_id' => 'required|exists:books,id',
             'qty' => 'required|integer|min:1',
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after:start_date',
             'note' => 'nullable|string',
         ]);
 
-        $equipment = Equipment::findOrFail($validated['equipment_id']);
-        if ($equipment->qty_available < $validated['qty']) {
-            return back()->withErrors('Stok alat tidak cukup');
+        $book = Book::findOrFail($validated['book_id']);
+        if ($book->qty_available < $validated['qty']) {
+            return back()->withErrors(['qty' => 'Stok buku tidak cukup. Tersedia: ' . $book->qty_available]);
         }
 
         Borrowing::create([
-            ...$validated,
+            'book_id' => $validated['book_id'],
             'user_id' => Auth::id(),
+            'qty' => $validated['qty'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'note' => $validated['note'],
             'status' => 'pending',
         ]);
 
@@ -52,7 +69,7 @@ class BorrowingController extends Controller
         $borrowingQuery = Auth::user()->borrowings();
 
         $borrowings = (clone $borrowingQuery)
-            ->with('equipment')
+            ->with('book')
             ->orderByDesc('created_at')
             ->paginate(10);
 

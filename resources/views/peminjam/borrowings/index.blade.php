@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Peminjaman Saya - Sport Hub')
+@section('title', 'Peminjaman Saya - Book Hub')
 
 @section('content')
 <div class="mb-6">
     <h1 class="text-3xl font-bold text-gray-900">Peminjaman Saya</h1>
-    <p class="text-gray-600 mt-2">Lihat dan kelola semua peminjaman alat Anda</p>
+    <p class="text-gray-600 mt-2">Lihat dan kelola semua peminjaman buku Anda</p>
 </div>
 
 @if ($borrowings->count() > 0)
@@ -40,8 +40,8 @@
                     <div class="p-6">
                         <div class="flex items-center justify-between gap-4 mb-4">
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">{{ $borrowing->equipment->name }}</h3>
-                                <p class="text-sm text-gray-500">Kode: {{ $borrowing->equipment->code }}</p>
+                                <h3 class="text-lg font-bold text-gray-900">{{ $borrowing->book->name }}</h3>
+                                <p class="text-sm text-gray-500">ISBN: {{ $borrowing->book->isbn }}</p>
                             </div>
                             <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full
                                 @if ($borrowing->status === 'pending') bg-yellow-100 text-yellow-800
@@ -151,8 +151,8 @@
     <div class="bg-white rounded-lg shadow p-12 text-center">
         <div class="text-5xl mb-4">📭</div>
         <p class="text-gray-500 text-lg mb-4">Anda belum memiliki peminjaman</p>
-        <a href="{{ route('peminjam.equipments.index') }}" class="inline-block bg-lime-600 text-white px-6 py-2 rounded-lg hover:bg-lime-700 transition font-medium">
-            Lihat Daftar Alat
+        <a href="{{ route('peminjam.books.index') }}" class="inline-block bg-lime-600 text-white px-6 py-2 rounded-lg hover:bg-lime-700 transition font-medium">
+            Lihat Daftar Buku
         </a>
     </div>
 @endif

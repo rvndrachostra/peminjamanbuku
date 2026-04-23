@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Kategori - Sport Hub')
+@section('title', 'Edit Kategori - BookHub')
 
 @section('content')
 <div class="mb-6">
     <h1 class="text-3xl font-bold text-gray-900">Edit Kategori</h1>
-    <p class="text-gray-600 mt-2">Ubah data kategori alat</p>
+    <p class="text-gray-600 mt-2">Ubah data kategori buku</p>
 </div>
 
 <div class="bg-white rounded-lg shadow p-8 max-w-2xl">

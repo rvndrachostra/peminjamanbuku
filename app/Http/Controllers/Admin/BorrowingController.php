@@ -11,7 +11,7 @@ class BorrowingController extends Controller
 {
     public function index()
     {
-        $borrowings = Borrowing::with(['user', 'equipment', 'approver'])->orderByDesc('created_at')->paginate(10);
+        $borrowings = Borrowing::with(['user', 'book', 'approver'])->orderByDesc('created_at')->paginate(10);
         return view('admin.borrowings.index', compact('borrowings'));
     }
 
@@ -38,9 +38,9 @@ class BorrowingController extends Controller
 
         if ($validated['status'] === 'returned') {
             $borrowing->update(['returned_at' => now()]);
-            $equipment = $borrowing->equipment;
-            $equipment->update([
-                'qty_available' => $equipment->qty_available + $borrowing->qty,
+            $book = $borrowing->book;
+            $book->update([
+                'qty_available' => $book->qty_available + $borrowing->qty,
             ]);
         }
 

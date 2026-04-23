@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Kategori - Sport Hub')
+@section('title', 'Kelola Kategori - BookHub')
 
 @section('content')
 <div class="mb-6 flex items-center justify-between">
     <div>
-        <h1 class="text-3xl font-bold text-gray-900">Kategori Sport</h1>
-        <p class="text-gray-600 mt-2">Manajemen kategori Sport</p>
+        <h1 class="text-3xl font-bold text-gray-900">Kategori Buku</h1>
+        <p class="text-gray-600 mt-2">Manajemen kategori Buku</p>
     </div>
     <a href="{{ route('admin.categories.create') }}" class="bg-lime-600 text-white px-6 py-2 rounded-lg hover:bg-lime-700 transition font-medium">
         + Tambah Kategori
@@ -20,7 +20,7 @@
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Kategori</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deskripsi</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Alat</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Buku</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tindakan</th>
                 </tr>
             </thead>
@@ -35,7 +35,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-lime-100 text-blue-800">
-                                {{ $category->equipments_count ?? 0 }}
+                                {{ $category->books_count ?? 0 }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">

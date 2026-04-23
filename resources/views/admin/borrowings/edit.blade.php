@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Peminjaman - Sport Hub')
+@section('title', 'Edit Peminjaman - Book Hub')
 
 @section('content')
 <div class="mb-6">
     <h1 class="text-3xl font-bold text-gray-900">Edit Status Peminjaman</h1>
-    <p class="text-gray-600 mt-2">Ubah status peminjaman alat</p>
+    <p class="text-gray-600 mt-2">Ubah status peminjaman buku</p>
 </div>
 
 <div class="bg-white rounded-lg shadow p-8 max-w-2xl">
     <div class="mb-6 p-4 bg-gray-100 rounded-lg">
         <h3 class="font-semibold text-gray-900 mb-2">Informasi Peminjaman</h3>
         <p class="text-sm text-gray-700"><strong>Peminjam:</strong> {{ $borrowing->user->name }}</p>
-        <p class="text-sm text-gray-700"><strong>Alat:</strong> {{ $borrowing->equipment->name }} ({{ $borrowing->equipment->code }})</p>
+        <p class="text-sm text-gray-700"><strong>Buku:</strong> {{ $borrowing->book->name }} ({{ $borrowing->book->isbn }})</p>
         <p class="text-sm text-gray-700"><strong>Jumlah:</strong> {{ $borrowing->qty }}</p>
         <p class="text-sm text-gray-700"><strong>Tanggal:</strong> {{ $borrowing->start_date->format('d/m/Y') }} - {{ $borrowing->end_date->format('d/m/Y') }}</p>
     </div>

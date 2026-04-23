@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Peminjam - Sport Hub')
+@section('title', 'Dashboard Peminjam - BookHub')
 
 @section('content')
 <div class="mb-8">
@@ -50,10 +50,10 @@
     <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-6">Menu Peminjaman</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <a href="{{ route('peminjam.equipments.index') }}" class="block p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg hover:shadow-lg transition border-l-4 border-blue-600">
+            <a href="{{ route('peminjam.books.index') }}" class="block p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg hover:shadow-lg transition border-l-4 border-blue-600">
                 <div class="text-3xl mb-3">🔍</div>
-                <p class="font-bold text-gray-900 text-lg">Lihat Daftar Alat</p>
-                <p class="text-sm text-gray-600 mt-1">Jelajahi semua alat yang tersedia untuk dipinjam</p>
+                <p class="font-bold text-gray-900 text-lg">Lihat Daftar Buku</p>
+                <p class="text-sm text-gray-600 mt-1">Jelajahi semua buku yang tersedia untuk dipinjam</p>
             </a>
 
             <a href="{{ route('peminjam.borrowings.index') }}" class="block p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-lg hover:shadow-lg transition border-l-4 border-green-600">

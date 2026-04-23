@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Setujui Peminjaman - Sport ')
+@section('title', 'Setujui Peminjaman - Book Hub')
 
 @section('content')
 <div class="mb-6">
     <h1 class="text-3xl font-bold text-gray-900">Setujui Peminjaman</h1>
-    <p class="text-gray-600 mt-2">Proses persetujuan permintaan peminjaman Sport</p>
+    <p class="text-gray-600 mt-2">Proses persetujuan permintaan peminjaman Buku</p>
 </div>
 
 <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -15,7 +15,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peminjam</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sport</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buku</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Peminjaman</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tindakan</th>
@@ -29,8 +29,8 @@
                                 <p class="text-xs text-gray-500">{{ $borrowing->user->phone ?? '-' }}</p>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <p class="text-sm font-medium text-gray-900">{{ $borrowing->equipment->name }}</p>
-                                <p class="text-xs text-gray-500">Stok: {{ $borrowing->equipment->qty_available }}/{{ $borrowing->equipment->qty_total }}</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $borrowing->book->name }}</p>
+                                <p class="text-xs text-gray-500">Stok: {{ $borrowing->book->qty_available }}/{{ $borrowing->book->qty_total }}</p>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <p class="text-sm text-gray-900">{{ $borrowing->qty }}</p>
