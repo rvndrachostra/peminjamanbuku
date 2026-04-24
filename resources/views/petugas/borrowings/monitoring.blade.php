@@ -111,6 +111,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batas Kembali</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Denda</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pembayaran</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tindakan</th>
                     </tr>
@@ -165,6 +166,20 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
+                                @if ($borrowing->payment_status === 'pending')
+                                    <div class="text-sm font-semibold text-orange-600">{{ $borrowing->payment_method === 'transfer' ? 'Transfer' : 'Tunai' }} pending</div>
+                                    @if ($borrowing->payment_method === 'transfer' && $borrowing->payment_proof)
+                                        <a href="{{ asset('storage/' . $borrowing->payment_proof) }}" target="_blank" class="text-xs text-blue-600 hover:underline">Lihat bukti</a>
+                                    @endif
+                                @elseif ($borrowing->payment_status === 'confirmed')
+                                    <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Dikonfirmasi</span>
+                                @elseif ($borrowing->fine_status === 'belum_lunas')
+                                    <span class="text-sm text-gray-500">Menunggu peminjam</span>
+                                @else
+                                    <span class="text-sm text-gray-500">-</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 @if ($borrowing->status === 'approved')
                                     <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-lime-100 text-blue-800">
                                         Dipinjam
@@ -194,7 +209,7 @@
                                         Dikembalikan
                                     </button>
                                 @endif
-                                @if ($borrowing->status === 'returned' && $borrowing->fine_status === 'belum_lunas')
+                                @if ($borrowing->status === 'returned' && $borrowing->fine_status === 'belum_lunas' && $borrowing->payment_status === 'pending')
                                     <button
                                         type="button"
                                         class="open-paid-modal bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition"
@@ -202,8 +217,10 @@
                                         data-user-name="{{ $borrowing->user->name }}"
                                         data-total-fine="{{ $borrowing->total_fine }}"
                                     >
-                                        Tandai Lunas
+                                        Konfirmasi Pembayaran
                                     </button>
+                                @elseif ($borrowing->status === 'returned' && $borrowing->fine_status === 'belum_lunas')
+                                    <span class="text-xs text-gray-500">Menunggu pembayaran</span>
                                 @else
                                     <span class="text-xs text-gray-500">Selesai</span>
                                 @endif
@@ -309,7 +326,7 @@
     <div class="modal-backdrop absolute inset-0 bg-black/50"></div>
     <div class="modal-panel relative z-10 w-full max-w-sm rounded-2xl bg-white shadow-2xl max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-            <h2 class="text-xl font-bold text-gray-900">Konfirmasi Pelunasan Denda</h2>
+            <h2 class="text-xl font-bold text-gray-900">Konfirmasi Pembayaran</h2>
             <button type="button" class="text-gray-400 hover:text-gray-700" data-close="paid">✕</button>
         </div>
 
@@ -319,6 +336,21 @@
                 <p><span class="font-semibold">Peminjam:</span> <span id="paidBorrowerLabel">-</span></p>
                 <p><span class="font-semibold">Total Denda:</span> <span id="paidFineLabel">Rp 0</span></p>
             </div>
+
+            <div class="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">
+                <p class="font-semibold">Transfer Bank</p>
+                <p class="mt-2">Bank BJB Sekolah: <span class="font-semibold">901784812374</span></p>
+                <p>A/N: <span class="font-semibold">SMKN 1 Ciomas</span></p>
+                <p class="mt-3 text-gray-700">Silakan unggah bukti transfer setelah pembayaran dilakukan.</p>
+            </div>
+
+            <div>
+                <label for="payment_proof" class="block text-sm font-medium text-gray-700">Bukti Transfer</label>
+                <input type="file" id="payment_proof" name="payment_proof" required accept="image/*,application/pdf" class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-blue-500" />
+                <p class="text-xs text-gray-500 mt-1">Unggah bukti pembayaran dalam format JPG, PNG, atau PDF (maks. 4MB).</p>
+            </div>
+
+            <input type="hidden" name="payment_method" value="transfer">
 
             <p class="text-sm text-gray-600">Setelah dikonfirmasi, status denda akan berubah dari belum lunas menjadi lunas.</p>
 
@@ -331,7 +363,7 @@
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                     </svg>
-                    <span id="paidConfirmLabel">Yakin, Tandai Lunas</span>
+                    <span id="paidConfirmLabel">Yakin, Konfirmasi Pembayaran</span>
                     <svg id="paidSuccessCheck" class="absolute left-1/2 h-5 w-5 -translate-x-1/2 text-white opacity-0" style="bottom: 3px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                     </svg>

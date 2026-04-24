@@ -144,17 +144,22 @@ class BorrowingController extends Controller
             return back()->withErrors('Denda sudah berstatus lunas');
         }
 
+        if ($borrowing->payment_status !== 'pending') {
+            return back()->withErrors('Belum ada permintaan pembayaran dari peminjam');
+        }
+
         $borrowing->update([
             'fine_status' => 'lunas',
             'fine_paid_at' => now(),
+            'payment_status' => 'confirmed',
         ]);
 
         $this->logActivity(
             Auth::user(),
-            "Menandai denda peminjaman {$borrowing->id} milik {$borrowing->user->name} sebagai lunas"
+            "Menandai denda peminjaman {$borrowing->id} milik {$borrowing->user->name} sebagai lunas dan konfirmasi pembayaran"
         );
 
-        return redirect()->route('petugas.borrowings.monitoring')->with('success', 'Status denda berhasil diubah menjadi lunas');
+        return redirect()->route('petugas.borrowings.monitoring')->with('success', 'Pembayaran berhasil dikonfirmasi dan status denda diubah menjadi lunas');
     }
 
     public function report()

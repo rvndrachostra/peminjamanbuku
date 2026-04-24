@@ -29,6 +29,10 @@ class Borrowing extends Model
         'total_fine',
         'fine_status',
         'fine_paid_at',
+        'payment_method',
+        'payment_proof',
+        'payment_status',
+        'payment_requested_at',
     ];
 
     protected $casts = [
@@ -37,6 +41,7 @@ class Borrowing extends Model
         'actual_return_date' => 'date',
         'returned_at' => 'datetime',
         'fine_paid_at' => 'datetime',
+        'payment_requested_at' => 'datetime',
         'late_days' => 'integer',
         'daily_late_fee' => 'integer',
         'late_fine' => 'integer',

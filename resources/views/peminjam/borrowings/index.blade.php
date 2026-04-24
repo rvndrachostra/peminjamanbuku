@@ -136,7 +136,49 @@
                                         <p>{{ $borrowing->return_note }}</p>
                                     </div>
                                 @endif
-                            </div>
+                                @if ($borrowing->total_fine > 0 && $borrowing->fine_status === 'belum_lunas')
+                                    @if ($borrowing->payment_status === 'pending')
+                                        <div class="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900">
+                                            <p class="font-semibold">Permintaan pembayaran terkirim</p>
+                                            <p>Metode: <span class="font-semibold">{{ $borrowing->payment_method === 'transfer' ? 'Transfer' : 'Tunai' }}</span></p>
+                                            @if ($borrowing->payment_method === 'transfer' && $borrowing->payment_proof)
+                                                <p>Bukti transfer: <a href="{{ asset('storage/' . $borrowing->payment_proof) }}" target="_blank" class="text-blue-600 hover:underline">Lihat bukti</a></p>
+                                            @endif
+                                            <p class="mt-2">Silakan tunggu konfirmasi petugas.</p>
+                                        </div>
+                                    @else
+                                        <div class="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">
+                                            <p class="font-semibold">Pilih metode pembayaran</p>
+                                            <p class="text-gray-700 mt-2">Jika memilih transfer, unggah bukti pembayaran setelah melakukan transfer ke Bank BJB Sekolah.</p>
+                                            <p class="text-gray-700 text-sm mt-2"><span class="font-semibold">Bank BJB Sekolah</span>: 901784812374</p>
+                                            <p class="text-gray-700 text-sm">A/N: SMKN 1 Ciomas</p>
+
+                                            <form action="{{ route('peminjam.borrowings.pay', $borrowing) }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-4">
+                                                @csrf
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                    <label class="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 cursor-pointer">
+                                                        <input type="radio" name="payment_method" value="tunai" class="h-4 w-4 text-emerald-600" checked data-payment-toggle="{{ $borrowing->id }}">
+                                                        <span class="font-medium text-gray-900">Tunai</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 cursor-pointer">
+                                                        <input type="radio" name="payment_method" value="transfer" class="h-4 w-4 text-emerald-600" data-payment-toggle="{{ $borrowing->id }}">
+                                                        <span class="font-medium text-gray-900">Transfer</span>
+                                                    </label>
+                                                </div>
+
+                                                <div id="transferProofGroup-{{ $borrowing->id }}" class="hidden">
+                                                    <label for="payment_proof_{{ $borrowing->id }}" class="block text-sm font-medium text-gray-700">Bukti Transfer</label>
+                                                    <input type="file" id="payment_proof_{{ $borrowing->id }}" name="payment_proof" accept="image/*,application/pdf" class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-blue-500" />
+                                                    <p class="text-xs text-gray-500 mt-1">Format JPG, PNG, atau PDF. Maks 4MB.</p>
+                                                </div>
+
+                                                <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 transition">
+                                                    Kirim Permintaan Pembayaran
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                @endif                            </div>
                         @endif
                     </div>
                 </div>
@@ -156,4 +198,26 @@
         </a>
     </div>
 @endif
+
+<script>
+    document.querySelectorAll('[data-payment-toggle]').forEach((input) => {
+        input.addEventListener('change', () => {
+            const id = input.dataset.paymentToggle;
+            const target = document.getElementById('transferProofGroup-' + id);
+            if (!target) return;
+            const form = input.closest('form');
+            if (!form) return;
+
+            if (input.value === 'transfer') {
+                target.classList.remove('hidden');
+            } else {
+                target.classList.add('hidden');
+                const field = target.querySelector('input[type="file"]');
+                if (field) {
+                    field.value = null;
+                }
+            }
+        });
+    });
+</script>
 @endsection

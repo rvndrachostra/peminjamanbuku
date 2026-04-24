@@ -103,4 +103,36 @@ class BorrowingController extends Controller
 
         return redirect()->route('peminjam.borrowings.index')->with('success', 'Alat berhasil dikembalikan');
     }
+
+    public function pay(Request $request, $id)
+    {
+        $borrowing = Borrowing::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->where('status', 'returned')
+            ->where('fine_status', 'belum_lunas')
+            ->firstOrFail();
+
+        if ($borrowing->payment_status === 'pending') {
+            return back()->withErrors('Permintaan pembayaran sudah dikirim. Tunggu konfirmasi petugas.');
+        }
+
+        $validated = $request->validate([
+            'payment_method' => 'required|in:tunai,transfer',
+            'payment_proof' => 'required_if:payment_method,transfer|file|mimes:jpg,jpeg,png,pdf|max:4096',
+        ]);
+
+        $paymentProofPath = null;
+        if ($validated['payment_method'] === 'transfer' && $request->hasFile('payment_proof')) {
+            $paymentProofPath = $request->file('payment_proof')->store('payment_proofs', 'public');
+        }
+
+        $borrowing->update([
+            'payment_method' => $validated['payment_method'],
+            'payment_proof' => $paymentProofPath,
+            'payment_status' => 'pending',
+            'payment_requested_at' => now(),
+        ]);
+
+        return redirect()->route('peminjam.borrowings.index')->with('success', 'Permintaan pembayaran berhasil dikirim. Silakan tunggu konfirmasi petugas.');
+    }
 }

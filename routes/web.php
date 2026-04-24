@@ -67,4 +67,5 @@ Route::middleware(['auth', 'peminjam'])->prefix('peminjam')->name('peminjam.')->
     Route::post('borrowing', [PeminjamBorrowingController::class, 'store'])->name('borrowing.store');
     Route::get('my-borrowings', [PeminjamBorrowingController::class, 'myBorrowings'])->name('borrowings.index');
     Route::post('return/{id}', [PeminjamBorrowingController::class, 'return'])->name('borrowing.return');
+    Route::post('borrowings/{id}/pay', [PeminjamBorrowingController::class, 'pay'])->name('borrowings.pay');
 });
